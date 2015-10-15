@@ -3,11 +3,11 @@
 {dirname} = require 'path'
 {statSync} = require 'fs'
 
-prettify = (text, workingDirectory, {onComplete, onFailure}) ->
+prettify = (style, text, workingDirectory, {onComplete, onFailure}) ->
   lines = []
   proc = new BufferedProcess
     command: 'hindent'
-    args: ['--style', 'chris-done']
+    args: ['--style', style]
     options:
       cwd: workingDirectory
     stdout: (line) -> lines.push(line)
@@ -20,7 +20,7 @@ prettify = (text, workingDirectory, {onComplete, onFailure}) ->
   proc.process.stdin.write(text)
   proc.process.stdin.end()
 
-prettifyFile = (editor, format = 'haskell') ->
+prettifyFile = (style, editor, format = 'haskell') ->
   [firstCursor, cursors...] = editor.getCursors().map (cursor) ->
     cursor.getBufferPosition()
   try
@@ -29,7 +29,7 @@ prettifyFile = (editor, format = 'haskell') ->
       workDir = '.'
   catch
     workDir = '.'
-  prettify editor.getText(), workDir,
+  prettify style, editor.getText(), workDir,
     onComplete: (text) ->
       editor.setText(text)
       if editor.getLastCursor()?
@@ -49,13 +49,22 @@ module.exports = Hindent =
 
     @disposables.add \
       atom.commands.add 'atom-text-editor[data-grammar~="haskell"]',
-        'hindent:prettify': ({target}) =>
-          prettifyFile target.getModel()
+        'hindent:prettify-fundamental': ({target}) =>
+          prettifyFile 'fundamental', target.getModel()
+        'hindent:prettify-chris-done': ({target}) =>
+          prettifyFile 'chris-done', target.getModel()
+        'hindent:prettify-johan-tibell': ({target}) =>
+          prettifyFile 'johan-tibell', target.getModel()
+        'hindent:prettify-gibiansky': ({target}) =>
+          prettifyFile 'gibiansky', target.getModel()
 
     @menu.add atom.menu.add [
       label: 'hindent'
       submenu : [
-        {label: 'Prettify', command: 'hindent:prettify'}
+        {label: 'Fundamental', command: 'hindent:prettify-fundamental'}
+        {label: 'Chris Done', command: 'hindent:prettify-chris-done'}
+        {label: 'Johan Tibell', command: 'hindent:prettify-johan-tibell'}
+        {label: 'Gibiansky', command: 'hindent:prettify-gibiansky'}
       ]
     ]
 
