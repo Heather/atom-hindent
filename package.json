@@ -1,0 +1,19 @@
+{
+  "name": "hindent",
+  "main": "./lib/hindent",
+  "version": "0.0.1",
+  "description": "Haskell Prettifier",
+  "keywords": [
+    "haskell"
+  ],
+  "activationHooks": [
+    "language-haskell:grammar-used"
+  ],
+  "engines": {
+    "atom": ">=1.0.0 <2.0.0"
+  },
+  "dependencies": {
+
+  },
+  "readmeFilename": "README.md"
+}
