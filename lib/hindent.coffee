@@ -10,13 +10,11 @@ prettify = (text, workingDirectory, {onComplete, onFailure}) ->
     args: ['--style', 'chris-done']
     options:
       cwd: workingDirectory
-    stdout: (line) ->
-      lines.push(line)
+    stdout: (line) -> lines.push(line)
     exit: -> onComplete?(lines.join(''))
   proc.onWillThrowError ({error, handle}) ->
-    atom.notifications.addError "Hindent could not spawn #{shpath}",
+    atom.notifications.addError "Hindent could not spawn",
       detail: "#{error}"
-    console.error error
     onFailure?()
     handle()
   proc.process.stdin.write(text)
@@ -40,8 +38,6 @@ prettifyFile = (editor, format = 'haskell') ->
         cursors.forEach (cursor) ->
           editor.addCursorAtBufferPosition cursor,
             autoscroll: false
-    onFailure: (text) ->
-      atom.notifications.addError text
 
 module.exports = Hindent =
   disposables: null
